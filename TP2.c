@@ -4,6 +4,7 @@
  */
 #include <stdio.h>
 #include <string.h>
+//#include "reconocedor.h"
 int T(int q, int x);
 int conseguirIndice(int x);
 void vaciarString(char str[]);
