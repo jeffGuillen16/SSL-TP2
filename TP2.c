@@ -133,5 +133,10 @@ int T(int q, int x)
         {-1, -1},
         {4, 4},
         {-1, -1}};
-    return tabla[q][indice];
+
+    if (indice == -1) {
+        return -1; // Caracter no válido
+    } else {
+        return tabla[q][indice];
+    }
 }
