@@ -4,13 +4,16 @@
  */
 #include <stdio.h>
 #include <string.h>
-// #include "reconocedor.h"
+#define LENGTH 50
+#include "reconocedor.h"
 int T(int q, int x);
 int conseguirIndice(int x);
 void vaciarString(char str[]);
 void conseguirToken(char token[20], int estado_actual);
-#define LENGTH 50
-
+void imprimirCaracterRechazado(int x, int fila, int columna);
+void inicioTabla();
+void finTabla();
+void imprimirToken(char string[LENGTH], char token[20]);
 int main(int argc, char **argv)
 {
     int x;
@@ -27,9 +30,7 @@ int main(int argc, char **argv)
         printf("No se pudo abrir el archivo.\n");
         return 1;
     }
-    printf("+-------------+----------------------+\n");
-    printf("|En el codigo | Token                |\n");
-    printf("+-------------+----------------------+\n");
+    inicioTabla();
     int i = 0;
     x = fgetc(archivo);
 
@@ -40,18 +41,15 @@ int main(int argc, char **argv)
             if (estado_actual == 1)
             {
                 conseguirToken(token, estado_actual+1);
-                printf("| %-11s | %-20.*s |\n", string, 20, token);
+                imprimirToken(string,token);
             }
             fila++;
             col=1;
             memset(string, 0, LENGTH);
             estado_actual = 0;
             i = 0;
-            printf("**************************************\n");
-            printf("\n");
-            printf("+-------------+----------------------+\n");
-            printf("|En el codigo | Token                |\n");
-            printf("+-------------+----------------------+\n");
+            finTabla();
+            inicioTabla();
         }
         else
         {    
@@ -60,7 +58,7 @@ int main(int argc, char **argv)
             if (estado_actual == 2)
             {
                 conseguirToken(token, estado_actual);
-                printf("| %-11s | %-20.*s |\n", string, 20, token);
+                imprimirToken(string,token);
                 ungetc(x, archivo);
                 memset(string, 0, LENGTH);
                 estado_actual = 0;
@@ -70,8 +68,9 @@ int main(int argc, char **argv)
             {
                 conseguirToken(token, estado_actual);
                 estado_actual = 0;
-                printf("| %-11c | %-20.*s |\n", x, 20, token);
-                i = 0;
+                char caracter = (char)x;
+                string[i] = caracter;
+                imprimirToken(string,token);
             }
             
             else if (estado_actual == -1)
@@ -79,12 +78,10 @@ int main(int argc, char **argv)
                 if (strlen(string)>0)
                 {
                     conseguirToken(token, 1);
-                    printf("| %-11s | %-20.*s |\n", string, 20, token);
+                    imprimirToken(string,token);
                     memset(string, 0, LENGTH);                    
                 }
-                printf("**************************************\n");      
-                printf("Rechazo de: %c en la fila %d y columna %d\n", (char)x, fila, col);
-                printf("+-------------+----------------------+\n");
+                imprimirCaracterRechazado(x, fila,col);
                 estado_actual = 0;
                 memset(string, 0, LENGTH);
                 i = 0;
@@ -103,56 +100,27 @@ int main(int argc, char **argv)
         if (estado_actual == 1 )
         {
             conseguirToken(token, estado_actual + 1);
-            printf("| %-11s | %-20.*s |\n", string, 20, token);
-            printf("+-------------+----------------------+\n");
+            imprimirToken(string,token);
+            finTabla();
         }
         return 0;
     }
-
-    int conseguirIndice(int x)
-    {
-        if (x >= 48 && x <= 57)
-        {
-            return 0; // Dígitos del 0 al 9
-        }
-        else if ( (x >= 40 && x <= 43) || (x == 45) || (x == 47))
-        {
-            return 1; // Caracteres operadores [(, ), +, *, - , /]
-        }
-        else
-        {
-            return -1; // Caracteres no válidos
-        }
+    void imprimirToken(char string[LENGTH], char token[20]) {
+            printf("| %-11s | %-20.*s |\n", string, 20, token);
+            printf("+-------------+----------------------+\n");       
+    }
+    void imprimirCaracterRechazado(int x, int fila, int columna){
+            printf("**************************************\n");      
+            fprintf(stderr, "Rechazo de: %c en la fila %d y columna %d\n", (char)x, fila, columna);
+            printf("+-------------+----------------------+\n");
+    }
+    void inicioTabla(){
+        printf("+-------------+----------------------+\n");
+        printf("|En el codigo | Token                |\n");
+        printf("+-------------+----------------------+\n");
     }
 
-    void conseguirToken(char token[20], int estado_actual)
-    {
-        if (estado_actual == 2)
-        {
-            strcpy(token, "Constante numerica");
-        }
-        else
-        {
-            strcpy(token, "Operador");
-        }
-    }
-    int T(int q, int x)
-    {
-        int indice = conseguirIndice(x);
-
-        static int tabla[4][2] = {
-            {1, 3},
-            {1, 2},
-            {-1, -1},
-            {-1, -1}};
-
-        if (indice == -1)
-        {
-            return -1; // Caracter no válido
-        }
-        else
-        {
-            return tabla[q][indice];
-            
-        }
+    void finTabla(){
+        printf("**************************************\n");
+        printf("\n");
     }

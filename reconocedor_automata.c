@@ -27,14 +27,22 @@ void conseguirToken(char token[20], int estado_actual) {
     
 }
 int T(int q, int x)
-{
-    int indice = conseguirIndice(x);
+    {
+        int indice = conseguirIndice(x);
 
-    static int tabla[5][2] = {
-        {1, 3},
-        {1, 2},
-        {-1, -1},
-        {4, 4},
-        {-1, -1}};
-    return tabla[q][indice];
-}
+        static int tabla[4][2] = {
+            {1, 3},
+            {1, 2},
+            {-1, -1},
+            {-1, -1}};
+
+        if (indice == -1)
+        {
+            return -1; // Caracter no válido
+        }
+        else
+        {
+            return tabla[q][indice];
+            
+        }
+    }
