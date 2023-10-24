@@ -5,5 +5,5 @@
 ## Integrantes:
 * Damian Ezequiel Blum Bellini
 * Jeferson Guillen
-* 
-*
+* Nicolas Klaver
+* Franco Magnaghi
